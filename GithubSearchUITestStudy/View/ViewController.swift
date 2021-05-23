@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 class ViewController: UIViewController {
 
@@ -61,8 +62,12 @@ extension ViewController: UISearchBarDelegate {
 
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = tableView.cellForRow(at: indexPath) as! UserTableViewCell? {
-            print(cell.nameLabel?.text)
+        guard indexPath.row < networkManager.users.count else { return }
+        
+        if let urlStr = networkManager.users[indexPath.row].htmlUrl,
+           let url = URL(string: urlStr) {
+            let safariVC = SFSafariViewController(url: url)
+            self.present(safariVC, animated: true, completion: nil)
         }
     }
     
@@ -95,6 +100,7 @@ extension ViewController: UITableViewDataSource {
         let user = networkManager.users[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "userCell", for: indexPath) as! UserTableViewCell
         cell.user = user
+        cell.accessoryType = user.htmlUrl != nil ? .disclosureIndicator : .none
         
         return cell
     }
