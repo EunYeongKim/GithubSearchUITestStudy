@@ -43,7 +43,7 @@ class GithubSearchUITestStudyUITests: XCTestCase {
             searchField.tap()
             let deleteString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: stringValue.count)
             searchField.typeText(deleteString)
-            XCTAssertFalse(resultCellOfFirst.waitForExistence(timeout: 15.0))
+            XCTAssertFalse(resultCellOfFirst.waitForExistence(timeout: 1.0))
         }
     }
 
@@ -61,5 +61,20 @@ class GithubSearchUITestStudyUITests: XCTestCase {
         
         tableView.swipeUp()
         XCTAssertNotEqual(firstResultCount, resultCells.count)
+    }
+    
+    func test_셀선택시_상세화면으로_이동하는지() {
+        let searchField = app.searchFields.firstMatch
+        searchField.tap()
+        searchField.typeText("jangdta\n")
+        
+        let resultCellOfFirst = app.cells.firstMatch
+        XCTAssertTrue(resultCellOfFirst.waitForExistence(timeout: 15.0))
+        
+        XCTAssertTrue(resultCellOfFirst.isHittable)
+        resultCellOfFirst.tap()
+        
+        let safariVC = app.otherElements.webViews.firstMatch
+        XCTAssertTrue(safariVC.waitForExistence(timeout: 15.0))
     }
 }
